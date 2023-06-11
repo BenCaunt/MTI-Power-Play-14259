@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.drivetrain.drivetrainimpl.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.input.Async;
 import org.firstinspires.ftc.teamcode.input.AsyncThreaded;
-import org.firstinspires.ftc.teamcode.input.Controller;
 import org.firstinspires.ftc.teamcode.input.controllerimpl.GamepadController;
 import org.firstinspires.ftc.teamcode.output.goBildaTouchDriver;
 import org.firstinspires.ftc.teamcode.output.magnetTouch;
@@ -50,9 +49,8 @@ public class turretAutoAim extends LinearOpMode {
     private ServoMotor latch;
     private ServoMotor leftArm;
     private ServoMotor rightArm;
-    private Controller controller1;
-    private Controller controller2;
 
+    Pose2d poseEstimate;
     //Variable
     private double targetAngle = 0;
 
@@ -213,7 +211,7 @@ public class turretAutoAim extends LinearOpMode {
 //            drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
 //        }
 //        drive.getLocalizer().update(); //very very monke code please do not waste your time trying to understand
-        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
+        poseEstimate = drive.getLocalizer().getPoseEstimate();
         headingController.setTargetPosition(targetAngle);
 
         double headinginput = headingController.update(poseEstimate.getHeading());
@@ -325,14 +323,9 @@ public class turretAutoAim extends LinearOpMode {
         pitchTS = this.pitchTouchSensor.check();
     }
 
-    private void updateControllers() {
-        this.controller1.update();
-        this.controller2.update();
-    }
     private void updateAll() { //order: DT, Var, sensor, Control, position, motor. servo, telemetry.
         this.updateVariable();
         this.updateSensor();
-        this.updateControllers();
         this.updatePosition();
         this.updateMotor();
         this.updateServo();
@@ -521,7 +514,13 @@ public class turretAutoAim extends LinearOpMode {
                     while (this.opModeInInit() || this.opModeIsActive() && !AsyncThreaded.stopped) updateDrivetrain();
                 });
     }
-
+    private void turretAutoAimTest() {
+        updateDrivetrain();
+        turretRTP = true;
+        double turretDesiredAngle = Math.atan2(10, 10) - poseEstimate.getHeading();
+        this.targetTurretPosition = turretDesiredAngle;
+        this.updateAll();
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -545,6 +544,7 @@ public class turretAutoAim extends LinearOpMode {
             } else if(gamepad1.right_trigger > 0.3) {
                 scoringPosition1TurretRight();
             }
+            turretAutoAimTest();
             this.interact();
             this.updateAll();
         }

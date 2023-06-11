@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import static java.lang.Math.PI;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -8,10 +10,10 @@ import org.firstinspires.ftc.teamcode.utils.Vector3;
 import org.firstinspires.ftc.teamcode.utils.M;
 
 public class TurretComponent extends DcMotorMotor implements Component {
-    private static final double RADIANS_TO_TICKS = -300;
+    private static final double RADIANS_TO_TICKS = -300; //103.8 * 28 = 2906.4 per 360 degrees
     private static final double LOWER_BOUND = 0;
-    private static final double UPPER_BOUND = -950;
-    private static final double INIT_RADIANS = -1.4660765716752369;
+    private static final double UPPER_BOUND = -1455;
+    private static final double INIT_RADIANS = PI/2;
 
     private Component parent;
 

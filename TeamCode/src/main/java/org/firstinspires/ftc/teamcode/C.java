@@ -83,7 +83,7 @@ public class C {
     }
     //Motor
     public static final double turretLB = 0;
-    public static final double turretUB = -950;
+    public static final double turretUB = -1455;
     public static final double[] turretPositions= {0,0.7,0.9};
     public static final double pitchLB = 0;
     public static final double pitchUB = -1875;

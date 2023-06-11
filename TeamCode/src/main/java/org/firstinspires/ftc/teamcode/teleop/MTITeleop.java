@@ -104,7 +104,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private int depositStep = 1;
     private int cycleStep = 1;
     SampleMecanumDrive drive;
-
+    Pose2d poseEstimate;
     private void initDrivetrain() {
         this.drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -214,7 +214,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
 //            drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
 //        }
 //        drive.getLocalizer().update(); //very very monke code please do not waste your time trying to understand
-        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
+        poseEstimate = drive.getLocalizer().getPoseEstimate();
         headingController.setTargetPosition(targetAngle);
 
         double headinginput = headingController.update(poseEstimate.getHeading());
@@ -227,6 +227,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
         drive.getLocalizer().update();
     }
     private void updateTelemetry() {
+        updateDrivetrain();
 //        telemetry.addData("this.leftLinSlide.getPower()", this.leftLinSlide.getPower());
 //        telemetry.addData("linSlidePos", this.linSlidePositions[this.linSlidePosition]);
 //        telemetry.addData("Veer is an absolute monkey V1 XD", this.leftLinSlide.getCurrentPosition());
@@ -242,6 +243,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
 //        telemetry.addData("pitchTargetPosition", this.targetPitchPosition);
 //        telemetry.addData("limit", this.turretSensor.isPressed());
         telemetry.addData("turret pos", this.turret.getCurrentPosition());
+        telemetry.addData("rotation", poseEstimate.getHeading());
         telemetry.update();
     }
     private void updateVariable() {
