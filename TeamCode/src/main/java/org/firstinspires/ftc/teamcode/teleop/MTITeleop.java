@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
 @TeleOp
     public class MTITeleop extends LinearOpMode {
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
-    private PIDFController translationalController = new PIDFController(SampleMecanumDrive.TRANSLATIONAL_PID);
+//    private PIDFController translationalController = new PIDFController(SampleMecanumDrive.TRANSLATIONAL_PID);
 
     //    public static double DISTANCE = 20;
     private Vector2d targetPosition = new Vector2d(0, 0);
@@ -203,15 +203,15 @@ import org.firstinspires.ftc.teamcode.utils.M;
         targetPosition = new Vector2d(poseEstimate.getX(), poseEstimate.getY());
         Vector2d difference = targetPosition.minus(poseEstimate.vec());
         double theta = difference.angle();
-
-
         headingController.setTargetPosition(theta);
-//            headingController.setTargetPosition(Math.toRadians(0));
-//            translationalController.setTargetPosition(DISTANCE);
         double headinginput = headingController.update(poseEstimate.getHeading());
-        drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
-
-        drive.getLocalizer().update(); //very very monke code
+        if(Math.abs(gamepad1.right_stick_x) <0.05) {
+            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
+        }else {
+            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
+            drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
+        }
+        drive.getLocalizer().update(); //very very monke code please do not waste your time trying to understand
     }
     private void updateTelemetry() {
 //        telemetry.addData("this.leftLinSlide.getPower()", this.leftLinSlide.getPower());
@@ -279,7 +279,10 @@ import org.firstinspires.ftc.teamcode.utils.M;
                             this.clawOpen = true;
                             this.updatePosition();
                             this.updateServo();
-                            sleep(300);
+                            long start = System.currentTimeMillis();
+                            while(System.currentTimeMillis()- start <= 250) {
+                                this.updateDrivetrain();
+                            }
                             this.preIntakeMode();
                             cycleStep++;
                             break;
@@ -392,8 +395,10 @@ import org.firstinspires.ftc.teamcode.utils.M;
                             this.clawOpen = true;
                             this.updatePosition();
                             this.updateServo();
-                            sleep(300);
-                            this.preIntakeMode();
+                            long start = System.currentTimeMillis();
+                            while(System.currentTimeMillis()- start <= 300) {
+                                this.updateDrivetrain();
+                            }                            this.preIntakeMode();
                             intakeStep = 1;
                     }
                 })
@@ -425,7 +430,11 @@ import org.firstinspires.ftc.teamcode.utils.M;
         this.clawOpen = false;
         this.updatePosition();
         this.updateServo();
-        sleep(250);
+//        sleep(250);
+        long start = System.currentTimeMillis();
+        while(System.currentTimeMillis()- start <= 250) {
+            this.updateDrivetrain();
+        }
         frontArmPosition = 1;
         moveFrontArm();
         targetArmPosition = 0;
@@ -624,10 +633,14 @@ import org.firstinspires.ftc.teamcode.utils.M;
         if(linSlideHigh) this.linSlidePosition = 2;
         else this.linSlidePosition = 1;
     }
+
     private void linSlideReset(){
         if(targetFrontArmPosition > 0.8) {
             targetFrontArmPosition = 0.7;
-            sleep(100);
+            long start = System.currentTimeMillis();
+            while(System.currentTimeMillis()- start <= 100) {
+                this.updateDrivetrain();
+            }
         }
         this.depositPosition = 0;
         moveDeposit();

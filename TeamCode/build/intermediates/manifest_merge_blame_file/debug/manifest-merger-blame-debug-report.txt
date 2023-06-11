@@ -12,13 +12,13 @@
 12
 13    <uses-sdk
 14        android:minSdkVersion="23"
-14-->/Users/des_veve/Documents/14259-main-main/TeamCode/src/main/AndroidManifest.xml
+14-->/Users/des_veve/Documents/14259-main-main/MTI-Power-Play/TeamCode/src/main/AndroidManifest.xml
 15        android:targetSdkVersion="28" />
-15-->/Users/des_veve/Documents/14259-main-main/TeamCode/src/main/AndroidManifest.xml
+15-->/Users/des_veve/Documents/14259-main-main/MTI-Power-Play/TeamCode/src/main/AndroidManifest.xml
 16
 17    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-17-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:5-81
-17-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:22-78
+17-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:5-81
+17-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:22-78
 18    <uses-permission
 18-->[org.firstinspires.ftc:Blocks:8.1.1] /Users/des_veve/.gradle/caches/transforms-3/a381e547c5b335b4f336c1a8dc63554f/transformed/jetified-Blocks-8.1.1/AndroidManifest.xml:11:5-13:35
 19        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -172,116 +172,116 @@
 99-->[com.journeyapps:zxing-android-embedded:4.3.0] /Users/des_veve/.gradle/caches/transforms-3/77b030d33441ad2424efa99d4f05c37e/transformed/jetified-zxing-android-embedded-4.3.0/AndroidManifest.xml:44:9-33
 100
 101    <application
-101-->/Users/des_veve/Documents/14259-main-main/TeamCode/src/main/AndroidManifest.xml:10:5-19
+101-->/Users/des_veve/Documents/14259-main-main/MTI-Power-Play/TeamCode/src/main/AndroidManifest.xml:10:5-19
 102        android:name="org.firstinspires.ftc.robotcore.internal.system.RobotApplication"
 102-->[org.firstinspires.ftc:RobotCore:8.1.1] /Users/des_veve/.gradle/caches/transforms-3/3c78789e36818da5ea2d73e485f8e74e/transformed/jetified-RobotCore-8.1.1/AndroidManifest.xml:87:18-97
 103        android:allowBackup="true"
-103-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:9-35
+103-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:9-35
 104        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 104-->[androidx.core:core:1.3.0] /Users/des_veve/.gradle/caches/transforms-3/080f313e68143e30a4633ed9df16502e/transformed/core-1.3.0/AndroidManifest.xml:24:18-86
 105        android:debuggable="true"
 106        android:icon="@drawable/ic_launcher"
-106-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:9-45
+106-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:9-45
 107        android:label="@string/app_name"
-107-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:9-41
+107-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:9-41
 108        android:largeHeap="true"
-108-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:18:9-33
+108-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:18:9-33
 109        android:testOnly="true"
 110        android:theme="@style/AppThemeRedRC"
-110-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:19:9-45
+110-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:19:9-45
 111        android:usesCleartextTraffic="true" > <!-- Indicates to the ControlHubUpdater what the latest version of the Control Hub is that this app supports -->
-111-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:20:9-44
+111-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:20:9-44
 112        <meta-data
-112-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:23:9-25:33
+112-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:23:9-25:33
 113            android:name="org.firstinspires.latestSupportedControlHubVersion"
-113-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:24:13-78
+113-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:24:13-78
 114            android:value="1" /> <!-- The main robot controller activity -->
-114-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:25:13-30
+114-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:25:13-30
 115        <activity
-115-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:28:9-39:20
+115-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:28:9-39:20
 116            android:name="org.firstinspires.ftc.robotcontroller.internal.PermissionValidatorWrapper"
-116-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:29:13-101
+116-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:29:13-101
 117            android:configChanges="orientation|screenSize"
-117-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:30:13-59
+117-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:30:13-59
 118            android:label="@string/app_name"
-118-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:31:13-45
+118-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:31:13-45
 119            android:launchMode="singleTask"
-119-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:32:13-44
+119-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:32:13-44
 120            android:screenOrientation="fullUser" >
-120-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:33:13-49
+120-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:33:13-49
 121            <intent-filter>
-121-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:34:13-38:29
+121-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:34:13-38:29
 122                <category android:name="android.intent.category.LAUNCHER" />
-122-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:35:17-77
-122-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:35:27-74
+122-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:35:17-77
+122-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:35:27-74
 123
 124                <action android:name="android.intent.action.MAIN" />
-124-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:37:17-69
-124-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:37:25-66
+124-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:37:17-69
+124-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:37:25-66
 125            </intent-filter>
 126        </activity>
 127        <activity
-127-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:40:9-58:20
+127-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:40:9-58:20
 128            android:name="org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity"
-128-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:41:13-101
+128-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:41:13-101
 129            android:configChanges="orientation|screenSize"
-129-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:42:13-59
+129-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:42:13-59
 130            android:label="@string/app_name"
-130-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:43:13-45
+130-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:43:13-45
 131            android:launchMode="singleTask"
-131-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:44:13-44
+131-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:44:13-44
 132            android:screenOrientation="fullUser" >
-132-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:45:13-49
+132-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:45:13-49
 133            <intent-filter>
-133-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:46:13-48:29
+133-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:46:13-48:29
 134                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-134-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:47:17-90
-134-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:47:25-87
+134-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:47:17-90
+134-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:47:25-87
 135            </intent-filter>
 136
 137            <meta-data
-137-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:50:13-52:57
+137-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:50:13-52:57
 138                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-138-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:51:17-79
+138-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:51:17-79
 139                android:resource="@xml/device_filter" />
-139-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:52:17-54
+139-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:52:17-54
 140
 141            <!-- org.firstinspires.main.entry indicates that this app is compatible with the Dragonboard Control Hub -->
 142            <meta-data
-142-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:55:13-57:40
+142-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:55:13-57:40
 143                android:name="org.firstinspires.main.entry"
-143-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:56:17-60
+143-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:56:17-60
 144                android:value="true" />
-144-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:57:17-37
+144-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:57:17-37
 145        </activity> <!-- The robot controller service in which most of the robot functionality is managed -->
 146        <service
-146-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:61:9-63:38
+146-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:61:9-63:38
 147            android:name="com.qualcomm.ftccommon.FtcRobotControllerService"
-147-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:62:13-76
+147-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:62:13-76
 148            android:enabled="true" /> <!-- Assistant that autostarts the robot controller on android boot (if it's supposed to) -->
-148-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:63:13-35
+148-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:63:13-35
 149        <receiver
-149-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:66:9-77:20
+149-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:66:9-77:20
 150            android:name="org.firstinspires.ftc.ftccommon.internal.RunOnBoot"
-150-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:67:13-78
+150-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:67:13-78
 151            android:enabled="true"
-151-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:68:13-35
+151-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:68:13-35
 152            android:exported="true"
-152-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:69:13-36
+152-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:69:13-36
 153            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
-153-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:70:13-75
+153-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:70:13-75
 154            <intent-filter>
-154-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:71:13-76:29
+154-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:71:13-76:29
 155                <category android:name="android.intent.category.DEFAULT" />
-155-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:72:17-76
-155-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:72:27-73
+155-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:72:17-76
+155-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:72:27-73
 156
 157                <action android:name="android.intent.action.BOOT_COMPLETED" />
-157-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:74:17-79
-157-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:74:25-76
+157-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:74:17-79
+157-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:74:25-76
 158                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-158-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:75:17-82
-158-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:75:25-79
+158-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:75:17-82
+158-->[:FtcRobotController] /Users/des_veve/Documents/14259-main-main/MTI-Power-Play/FtcRobotController/build/intermediates/merged_manifest/debug/AndroidManifest.xml:75:25-79
 159            </intent-filter>
 160        </receiver>
 161
