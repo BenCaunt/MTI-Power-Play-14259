@@ -54,6 +54,8 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private Controller controller2;
 
     //Variable
+    private double targetAngle = 0;
+
     private int linSlidePosition = 0;
     private int depositPosition = 0;
     private int clawPosition = 0;
@@ -199,19 +201,30 @@ import org.firstinspires.ftc.teamcode.utils.M;
         this.turret.update();
     }
     private void updateDrivetrain() {
+//        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
+//        targetPosition = new Vector2d(poseEstimate.getX(), poseEstimate.getY());
+//        Vector2d difference = targetPosition.minus(poseEstimate.vec());
+//        double theta = difference.angle();
+//        headingController.setTargetPosition(theta);
+//        double headinginput = headingController.update(poseEstimate.getHeading());
+//        if(Math.abs(gamepad1.right_stick_x) <0.05) {
+//            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
+//        }else {
+//            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
+//            drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
+//        }
+//        drive.getLocalizer().update(); //very very monke code please do not waste your time trying to understand
         Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
-        targetPosition = new Vector2d(poseEstimate.getX(), poseEstimate.getY());
-        Vector2d difference = targetPosition.minus(poseEstimate.vec());
-        double theta = difference.angle();
-        headingController.setTargetPosition(theta);
+        headingController.setTargetPosition(targetAngle);
+
         double headinginput = headingController.update(poseEstimate.getHeading());
-        if(Math.abs(gamepad1.right_stick_x) <0.05) {
+        if(Math.abs(gamepad1.right_stick_x) <0.05) { // not turning
             drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
-        }else {
+        }else { // turning
             drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
-            drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
+            targetAngle = poseEstimate.getHeading();
         }
-        drive.getLocalizer().update(); //very very monke code please do not waste your time trying to understand
+        drive.getLocalizer().update();
     }
     private void updateTelemetry() {
 //        telemetry.addData("this.leftLinSlide.getPower()", this.leftLinSlide.getPower());

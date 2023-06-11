@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -26,14 +27,55 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * This opmode is designed as a convenient, coarse tuning for the follower PID coefficients. It
  * is recommended that you use the FollowerPIDTuner opmode for further fine tuning.
  */
+//@Config
+//@Autonomous(group = "drive")
+//public class BackAndForth extends LinearOpMode {
+//    private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
+////    private PIDFController translationalController = new PIDFController(SampleMecanumDrive.TRANSLATIONAL_PID);
+//
+//    private Vector2d targetPosition = new Vector2d(0, 0);
+//
+//    @Override
+//    public void runOpMode() throws InterruptedException {
+//        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+//        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,Math.toRadians(0)));
+//        headingController.setInputBounds(-Math.PI, Math.PI);
+//        waitForStart();
+//
+//        while (opModeIsActive() && !isStopRequested()) {
+//            Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
+//            targetPosition = new Vector2d(poseEstimate.getX(), poseEstimate.getY());
+//            Vector2d difference = targetPosition.minus(poseEstimate.vec());
+//            double theta = difference.angle();
+//
+//            headingController.setTargetPosition(theta);
+////            headingController.setTargetPosition(Math.toRadians(0));
+////            translationalController.setTargetPosition(DISTANCE);
+//            double headinginput = headingController.update(poseEstimate.getHeading());
+//            if(Math.abs(gamepad1.right_stick_x) <0.05) {
+//                drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
+//            }else {
+//                drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
+//                drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
+//            }
+//
+//            drive.getLocalizer().update();
+//
+//            telemetry.addData("x", poseEstimate.getX());
+//            telemetry.addData("y", poseEstimate.getY());
+//            telemetry.addData("heading", poseEstimate.getHeading());
+//            telemetry.addData("theta", theta);
+//            telemetry.update();
+//        }
+//    }
+//}
 @Config
-@Autonomous(group = "drive")
+@TeleOp(group = "drive")
 public class BackAndForth extends LinearOpMode {
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
-//    private PIDFController translationalController = new PIDFController(SampleMecanumDrive.TRANSLATIONAL_PID);
 
-    private Vector2d targetPosition = new Vector2d(0, 0);
-
+    private double targetAngle = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -41,22 +83,16 @@ public class BackAndForth extends LinearOpMode {
         drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,Math.toRadians(0)));
         headingController.setInputBounds(-Math.PI, Math.PI);
         waitForStart();
-
         while (opModeIsActive() && !isStopRequested()) {
             Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
-            targetPosition = new Vector2d(poseEstimate.getX(), poseEstimate.getY());
-            Vector2d difference = targetPosition.minus(poseEstimate.vec());
-            double theta = difference.angle();
 
-            headingController.setTargetPosition(theta);
-//            headingController.setTargetPosition(Math.toRadians(0));
-//            translationalController.setTargetPosition(DISTANCE);
+            headingController.setTargetPosition(targetAngle);
             double headinginput = headingController.update(poseEstimate.getHeading());
-            if(Math.abs(gamepad1.right_stick_x) <0.05) {
+            if(Math.abs(gamepad1.right_stick_x) <0.05) { // not turning
                 drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
-            }else {
+            }else { // turning
                 drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
-                drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
+                targetAngle = poseEstimate.getHeading();
             }
 
             drive.getLocalizer().update();
@@ -64,7 +100,6 @@ public class BackAndForth extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("theta", theta);
             telemetry.update();
         }
     }
