@@ -85,7 +85,7 @@ public class turretAutoAim extends LinearOpMode {
     private double targetPitchPower = 0;
     private double targetLinSlidePower = 0;
     private double targetTurretPower = 0;
-
+    private double turretDesiredAngle;
 
     //Tests
     private boolean linSlideHigh = true;
@@ -231,6 +231,7 @@ public class turretAutoAim extends LinearOpMode {
 //        telemetry.addData("Pitch Position", this.pitch.getCurrentPosition());
 //        telemetry.addData("LinSlide target Position", this.targetLinSlidePosition);
 //        telemetry.addData("ArmOut", this.armOut);
+//        turretAutoAimTest();
         telemetry.addData("pitch TS", this.pitchTS);
         telemetry.addData("Turret Mode", this.turretMode);
         telemetry.addData("latchEngaged" , this.latchEngaged);
@@ -238,7 +239,11 @@ public class turretAutoAim extends LinearOpMode {
 //        telemetry.addData("pitchRTP", this.pitchRTP);
 //        telemetry.addData("pitchTargetPosition", this.targetPitchPosition);
 //        telemetry.addData("limit", this.turretSensor.isPressed());
+        telemetry.addData("robot x", poseEstimate.getX());
+        telemetry.addData("robot y", poseEstimate.getY());
+        telemetry.addData("robot r", poseEstimate.getHeading());
         telemetry.addData("turret pos", this.turret.getCurrentPosition());
+        telemetry.addData("turret target pos", turretDesiredAngle);
         telemetry.update();
     }
     private void updateVariable() {
@@ -514,10 +519,22 @@ public class turretAutoAim extends LinearOpMode {
                     while (this.opModeInInit() || this.opModeIsActive() && !AsyncThreaded.stopped) updateDrivetrain();
                 });
     }
+    public double angleWrap(double radians) {
+
+        while (radians > Math.PI) {
+            radians -= 2 * Math.PI;
+        }
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
+        }
+
+        // keep in mind that the result is in radians
+        return radians;
+    }
     private void turretAutoAimTest() {
-        updateDrivetrain();
+        this.updateDrivetrain();
         turretRTP = true;
-        double turretDesiredAngle = Math.atan2(10, 10) - poseEstimate.getHeading();
+        turretDesiredAngle = Math.max(0,Math.min(1,(Math.toDegrees(angleWrap((Math.atan2(0 - poseEstimate.getY(), -10 - poseEstimate.getX()) - poseEstimate.getHeading() - Math.toRadians(180))))+90)/180));
         this.targetTurretPosition = turretDesiredAngle;
         this.updateAll();
     }
@@ -544,6 +561,7 @@ public class turretAutoAim extends LinearOpMode {
             } else if(gamepad1.right_trigger > 0.3) {
                 scoringPosition1TurretRight();
             }
+            this.updateDrivetrain();
             turretAutoAimTest();
             this.interact();
             this.updateAll();
