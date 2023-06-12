@@ -535,6 +535,7 @@ public class turretAutoAim extends LinearOpMode {
         this.updateDrivetrain();
         turretRTP = true;
         turretDesiredAngle = Math.max(0,Math.min(1,(Math.toDegrees(angleWrap((Math.atan2(0 - poseEstimate.getY(), -10 - poseEstimate.getX()) - poseEstimate.getHeading() - Math.toRadians(180))))+90)/180));
+        //0 and -10 are the targets. Ill organize it later but basically we gotta make a coordinate for every pole.
         this.targetTurretPosition = turretDesiredAngle;
         this.updateAll();
     }
