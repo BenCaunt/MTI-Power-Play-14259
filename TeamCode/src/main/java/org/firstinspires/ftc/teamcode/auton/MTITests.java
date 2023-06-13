@@ -31,7 +31,7 @@ public class MTITests extends LinearOpMode {
                     a=2;
                 }
             }
-
+            //impliment auto aim onto far pole here or some pole to prove it works
             drive.update();
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
