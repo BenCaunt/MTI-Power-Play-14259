@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
 public class TurretComponent extends DcMotorMotor implements Component {
     private static final double RADIANS_TO_TICKS = -300; //103.8 * 28 = 2906.4 per 360 degrees
     private static final double LOWER_BOUND = 0;
-    private static final double UPPER_BOUND = -1455;
+    private static final double UPPER_BOUND = -1285;
     private static final double INIT_RADIANS = PI/2;
 
     private Component parent;
