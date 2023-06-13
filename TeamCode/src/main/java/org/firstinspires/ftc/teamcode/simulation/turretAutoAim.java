@@ -498,7 +498,7 @@ public class turretAutoAim extends LinearOpMode {
         if(!gamepad1.a) {
             while (!gamepad1.a) {
                 turret.setPower(gamepad1.right_stick_x);
-                telemetry.addData("use the right joystick to rotate the turret ~45 degrees to the left assuming the front arm does not face you", turret.getPower());
+                telemetry.addData("use the right joystick to rotate the turret ~45 degrees to the left assuming the front arm does not face you (ignore this im too lazy to add the auto tuner in)", turret.getPower());
                 telemetry.update();
                 this.turret.update();
             }
