@@ -62,5 +62,6 @@ public class Pid {
         this.deDt = deDt;
 
         this.responseFunction.execute(factor);
+        //some cring epilepson stuff to save loop times cause min value or sm sm
     }
 }
