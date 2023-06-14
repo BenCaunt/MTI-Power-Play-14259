@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -22,11 +23,14 @@ import org.firstinspires.ftc.teamcode.input.controllerimpl.GamepadController;
 import org.firstinspires.ftc.teamcode.output.goBildaTouchDriver;
 import org.firstinspires.ftc.teamcode.output.magnetTouch;
 import org.firstinspires.ftc.teamcode.output.motorimpl.DcMotorExMotor;
+import org.firstinspires.ftc.teamcode.output.motorimpl.DoesntResetDcMotorExMotor;
 import org.firstinspires.ftc.teamcode.output.motorimpl.ServoMotor;
 import org.firstinspires.ftc.teamcode.pid.Pid;
 import org.firstinspires.ftc.teamcode.utils.M;
 
 
+
+@Config
 @TeleOp
     public class MTITeleop extends LinearOpMode {
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.meRotational);
@@ -40,10 +44,10 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private Pid turretPid;
     private Pid linSlidePid;
     private Drivetrain drivetrain;
-    private DcMotorExMotor turret;
-    private DcMotorExMotor pitch;
-    private DcMotorExMotor leftLinSlide;
-    private DcMotorExMotor rightLinSlide;
+    private DoesntResetDcMotorExMotor turret;
+    private DoesntResetDcMotorExMotor pitch;
+    private DoesntResetDcMotorExMotor leftLinSlide;
+    private DoesntResetDcMotorExMotor rightLinSlide;
     private ServoMotor claw;
     private ServoMotor frontArm;
     private ServoMotor deposit;
@@ -52,6 +56,18 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private ServoMotor rightArm;
     private Controller controller1;
     private Controller controller2;
+    private static double turretP = 3.2;
+    private static double turretI = 1.2;
+    private static double turretD = 0;
+
+    private static double pitchP = 3.2;
+    private static double pitchI = 1.2;
+    private static double pitchD = 0;
+
+    private static double slidesP = 3.2;
+    private static double slidesI = 1.2;
+    private static double slidesD = 0;
+
 
     //Variable
     private double targetAngle = 0;
@@ -74,8 +90,8 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private final double[] clawPositions = { 0.0, 1.0};
     private final double[] frontArmPositionas = {0,1,0.8};
     //Calculation variable!
-    private double targetPitchPosition;
-    private double targetTurretPosition;
+    private static double targetPitchPosition;
+    private static double targetTurretPosition;
     private double targetLinSlidePosition = this.linSlidePositions[linSlidePosition];
     private double targetFrontArmPosition = C.frontArmPositions[frontArmPosition];
     private double targetDepositPosition = C.depositPositions[depositPosition];
@@ -113,37 +129,38 @@ import org.firstinspires.ftc.teamcode.utils.M;
         headingController.setInputBounds(-Math.PI, Math.PI);
     }
     private void initMotor() {
-        this.pitch = new DcMotorExMotor(hardwareMap.get(DcMotorEx.class, "pitch"))
+        this.pitch = new DoesntResetDcMotorExMotor(hardwareMap.get(DcMotorEx.class, "pitch"))
                 .setLowerBound(C.pitchLB)
                 .setUpperBound(C.pitchUB)
                 .setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        this.turret = new DcMotorExMotor(hardwareMap.get(DcMotorEx.class, "turret"))
+        this.turret = new DoesntResetDcMotorExMotor(hardwareMap.get(DcMotorEx.class, "turret"))
                 .setLowerBound(C.turretLB)
                 .setUpperBound(C.turretUB)
                 .setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        this.leftLinSlide = new DcMotorExMotor(hardwareMap.get(DcMotorEx.class, "leftSlide"))
+        this.leftLinSlide = new DoesntResetDcMotorExMotor(hardwareMap.get(DcMotorEx.class, "leftSlide"))
                 .setLowerBound(C.linSlideLB)
                 .setUpperBound(C.linSlideUB)
                 .setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        this.rightLinSlide = new DcMotorExMotor(hardwareMap.get(DcMotorEx.class, "rightSlide"))
+        this.rightLinSlide = new DoesntResetDcMotorExMotor(hardwareMap.get(DcMotorEx.class, "rightSlide"))
                 .setLowerBound(C.linSlideLB)
                 .setUpperBound(C.linSlideUB)
                 .setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
     }
 
     private void initPID() {
-        this.linSlidePid = new Pid(new Pid.Coefficients(3.2, 1.2, 0.0),
+        //tune later cuh
+        this.linSlidePid = new Pid(new Pid.Coefficients(slidesP, slidesI, slidesD),
                 () -> this.targetLinSlidePosition - this.leftLinSlide.getCurrentPosition(),
                 factor -> {
                     this.leftLinSlide.setPower(M.clamp(-factor, -1, 0.6));
                     this.rightLinSlide.setPower(M.clamp(-factor, -1, 0.6));
                 });
-        this.pitchPid = new Pid(new Pid.Coefficients(3.2, 1.2, 0.0),
+        this.pitchPid = new Pid(new Pid.Coefficients(pitchP, pitchI, pitchD),
                 () -> this.targetPitchPosition - this.pitch.getCurrentPosition(),
                 factor -> {
                     this.pitch.setPower(-factor);
                 });
-        this.turretPid = new Pid(new Pid.Coefficients(3.2, 1.2, 0.0),
+        this.turretPid = new Pid(new Pid.Coefficients(turretP, turretI, turretD),
                 () -> this.targetTurretPosition - this.turret.getCurrentPosition(),
                 factor -> {
                     this.turret.setPower(factor);
@@ -271,7 +288,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
                     this.armPosition = 5;
                 })
                 .subscribeEvent(Controller.EventType.RIGHT_STICK_BUTTON, () -> {
-                    linSlideHigh = false;
+                    cycleStep = 1;
                 })
                 .subscribeEvent(Controller.EventType.LEFT_STICK_BUTTON, () -> {
                     this.turretRTP = true;
@@ -305,7 +322,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
                             long start = System.currentTimeMillis();
                             while(System.currentTimeMillis()- start <= 250) {
 //                                this.updateDrivetrain();
-                                this.updateMotor();
+//                                this.updateMotor();
                             }
                             this.preIntakeMode();
                             cycleStep++;
@@ -423,7 +440,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
                             this.updateServo();
                             long start = System.currentTimeMillis();
                             while(System.currentTimeMillis()- start <= 300) {
-                                this.updateAll();
+//                                this.updateAll();
 //                                this.updateDrivetrain();
                             }
                             this.preIntakeMode();
@@ -459,10 +476,10 @@ import org.firstinspires.ftc.teamcode.utils.M;
         this.updatePosition();
         this.updateServo();
 //        sleep(250);
-//        long start = System.currentTimeMillis();
-//        while(System.currentTimeMillis()- start <= 250){
-////            this.updateMotor();
-//        }
+        long start = System.currentTimeMillis();
+        while(System.currentTimeMillis()- start <= 250){
+//            this.updateMotor();
+        }
         frontArmPosition = 1;
         moveFrontArm();
         targetArmPosition = 0;
