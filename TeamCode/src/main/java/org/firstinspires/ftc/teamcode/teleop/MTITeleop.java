@@ -63,7 +63,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private int frontArmPosition = 1;
     private int armPosition = 2;
     private int pitchPosition;
-    private double[] linSlidePositions = {0,0.45,1};
+    private double[] linSlidePositions = {0,0.4,0.95};
     private double pitchReset = 0;
     private double turretReset = 0;
     private double pitchLastPosition = 0;
@@ -216,22 +216,23 @@ import org.firstinspires.ftc.teamcode.utils.M;
 //            drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,poseEstimate.getHeading()));
 //        }
 //        drive.getLocalizer().update(); //very very monke code please do not waste your time trying to understand
-        poseEstimate = drive.getLocalizer().getPoseEstimate();
-        headingController.setTargetPosition(targetAngle);
+//        poseEstimate = drive.getLocalizer().getPoseEstimate();
+//        headingController.setTargetPosition(targetAngle);
+        drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x * 0.6));
 
-        double headinginput = headingController.update(poseEstimate.getHeading());
-        if(Math.abs(gamepad1.right_stick_x) <0.01) { // not turning thresh
-            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
-        }else { // turning
-            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x * 0.8));
-            targetAngle = poseEstimate.getHeading();
-        }
+//        double headinginput = headingController.update(poseEstimate.getHeading());
+//        if(Math.abs(gamepad1.right_stick_x) <0.01) { // not turning thresh
+//            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x,headinginput));
+//        }else { // turning
+//            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x * 0.8));
+//            targetAngle = poseEstimate.getHeading();
+//        }
         //removed auto pid holder for dp purposes
 //        drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
         drive.getLocalizer().update();
     }
     private void updateTelemetry() {
-        updateDrivetrain();
+//        updateDrivetrain();
 //        telemetry.addData("this.leftLinSlide.getPower()", this.leftLinSlide.getPower());
 //        telemetry.addData("linSlidePos", this.linSlidePositions[this.linSlidePosition]);
 //        telemetry.addData("Veer is an absolute monkey V1 XD", this.leftLinSlide.getCurrentPosition());
@@ -247,12 +248,12 @@ import org.firstinspires.ftc.teamcode.utils.M;
 //        telemetry.addData("pitchTargetPosition", this.targetPitchPosition);
 //        telemetry.addData("limit", this.turretSensor.isPressed());
         telemetry.addData("turret pos", this.turret.getCurrentPosition());
-        telemetry.addData("rotation", poseEstimate.getHeading());
+//        telemetry.addData("rotation", poseEstimate.getHeading());
         telemetry.update();
     }
     private void updateVariable() {
         targetLinSlidePosition = M.clamp(this.linSlidePositions[this.linSlidePosition] + this.linSlidePositions[this.linSlidePosition]*(0.4 -this.targetPitchPosition) ,0,1);
-        targetPitchPower = gamepad1.right_stick_y;
+        targetPitchPower = gamepad2.left_stick_y;
         targetTurretPower = (gamepad1.left_trigger -gamepad1. right_trigger);
         targetLinSlidePower = 0.7*gamepad2.right_stick_y;
     }
@@ -283,10 +284,13 @@ import org.firstinspires.ftc.teamcode.utils.M;
                     switch (cycleStep) {
                         case 1:
                             linSlideReset();
-                            this.intakeOut();
                             this.cycleStep++;
                             break;
                         case 2:
+                            this.intakeOut();
+                            this.cycleStep++;
+                            break;
+                        case 3:
                             if(Math.abs(this.turret.getCurrentPosition() - 0.5) > 0.3){
                                 this.turretRTP = true;
                                 this.targetTurretPosition = 0.5;
@@ -294,18 +298,20 @@ import org.firstinspires.ftc.teamcode.utils.M;
                             this.intakeBack();
                             this.cycleStep++;
                             break;
-                        case 3:
+                        case 4:
                             this.clawOpen = true;
                             this.updatePosition();
                             this.updateServo();
                             long start = System.currentTimeMillis();
                             while(System.currentTimeMillis()- start <= 250) {
-                                this.updateDrivetrain();
+//                                this.updateDrivetrain();
+                                this.updateMotor();
                             }
                             this.preIntakeMode();
                             cycleStep++;
                             break;
-                        case 4:
+
+                        case 5:
 //                            this.latchEngaged = true;
 //                            this.updateAll();
                             switch(scorePos){
@@ -360,7 +366,8 @@ import org.firstinspires.ftc.teamcode.utils.M;
                     this.scoringPosition3();
                 })
                 .subscribeEvent(Controller.EventType.DPAD_DOWN, () -> {
-                    scoringPosition7();
+                    scorePos = 7;
+                    this.scoringPosition7();
                 });
 
         this.controller1
@@ -416,8 +423,10 @@ import org.firstinspires.ftc.teamcode.utils.M;
                             this.updateServo();
                             long start = System.currentTimeMillis();
                             while(System.currentTimeMillis()- start <= 300) {
-                                this.updateDrivetrain();
-                            }                            this.preIntakeMode();
+                                this.updateAll();
+//                                this.updateDrivetrain();
+                            }
+                            this.preIntakeMode();
                             intakeStep = 1;
                     }
                 })
@@ -450,10 +459,10 @@ import org.firstinspires.ftc.teamcode.utils.M;
         this.updatePosition();
         this.updateServo();
 //        sleep(250);
-        long start = System.currentTimeMillis();
-        while(System.currentTimeMillis()- start <= 250) {
-            this.updateDrivetrain();
-        }
+//        long start = System.currentTimeMillis();
+//        while(System.currentTimeMillis()- start <= 250){
+////            this.updateMotor();
+//        }
         frontArmPosition = 1;
         moveFrontArm();
         targetArmPosition = 0;
@@ -462,11 +471,17 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private void greatReset(){
         this.linSlideRTP = true;
         this.pitchRTP = true;
+        this.linSlidePosition = 0;
+        this.updateAll();
+        //pause
+        long start = System.currentTimeMillis();
+//        while(System.currentTimeMillis()- start <= 250) {
+////            this.updateMotor();
+//        }
         this.depositPosition = 0;
         moveDeposit();
-        this.linSlidePosition = 0;
         latchEngaged = false;
-        movePitch(0.25);
+        movePitch(0.27);
         this.targetTurretPosition = 0.5;
 
         this.turret.update();
@@ -565,7 +580,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
         linSlideRTP = true;
         this.latchEngaged = true;
         this.targetDepositPosition = 0.8;
-        movePitch(0.6);
+        movePitch(0.5);
         linSlideUp();
     }
     private void scoringPosition3() {
@@ -624,9 +639,8 @@ import org.firstinspires.ftc.teamcode.utils.M;
     }
     private void scoringPosition7() {
         pitchRTP = true;
-        linSlideRTP = true;
         this.latchEngaged = true;
-        movePitch(0.2);
+        movePitch(0);
         this.targetDepositPosition = 0.7;
         this.updateAll();
     }
@@ -656,18 +670,18 @@ import org.firstinspires.ftc.teamcode.utils.M;
     }
 
     private void linSlideReset(){
+        if(latchEngaged)this.latchEngaged = false;
         if(targetFrontArmPosition > 0.8) {
             targetFrontArmPosition = 0.7;
-            long start = System.currentTimeMillis();
-            while(System.currentTimeMillis()- start <= 100) {
-                this.updateDrivetrain();
-            }
         }
+        this.linSlidePosition = 0;
+//        long start = System.currentTimeMillis();
+//        while(System.currentTimeMillis()- start <= 200) {
+//            this.updateDrivetrain();
+//        }
         this.depositPosition = 0;
         moveDeposit();
-        if(latchEngaged)this.latchEngaged = false;
-        this.linSlidePosition = 0;
-        movePitch(0.5);
+        movePitch(0.27);
     }
 
     private void resetDepositPosition(){
@@ -689,7 +703,8 @@ import org.firstinspires.ftc.teamcode.utils.M;
         this.pitch.setPower(0);
         this.pitch.update();
         this.pitch.stopAndResetEncoder();
-        pitch.setPosition(0.2);
+        this.pitchRTP = true;
+        pitch.setPosition(0.3);
         this.pitch.update();
         if(!turretTouchSensor.check()) {
             while (!turretTouchSensor.check()) {
