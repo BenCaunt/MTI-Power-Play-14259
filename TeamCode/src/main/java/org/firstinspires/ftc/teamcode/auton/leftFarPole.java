@@ -1,23 +1,21 @@
-package org.firstinspires.ftc.teamcode.teleop;
-
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDFController;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+package org.firstinspires.ftc.teamcode.auton;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.C;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.Drive;
+import org.firstinspires.ftc.teamcode.drive.driveimpl.PosePidDrive;
 import org.firstinspires.ftc.teamcode.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.drivetrain.drivetrainimpl.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.input.Async;
 import org.firstinspires.ftc.teamcode.input.AsyncThreaded;
+
 import org.firstinspires.ftc.teamcode.input.Controller;
 import org.firstinspires.ftc.teamcode.input.controllerimpl.GamepadController;
 import org.firstinspires.ftc.teamcode.output.goBildaTouchDriver;
@@ -27,22 +25,76 @@ import org.firstinspires.ftc.teamcode.output.motorimpl.DoesntResetDcMotorExMotor
 import org.firstinspires.ftc.teamcode.output.motorimpl.ServoMotor;
 import org.firstinspires.ftc.teamcode.pid.Pid;
 import org.firstinspires.ftc.teamcode.utils.M;
+import org.firstinspires.ftc.teamcode.components.CameraComponent;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.firstinspires.ftc.robotcore.external.*;
 
-@Config
-@TeleOp
-    public class MTITeleop extends LinearOpMode {
-    private PIDFController headingController = new PIDFController(SampleMecanumDrive.meRotational);
-//xy pid?
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
-    //    public static double DISTANCE = 20;
-    private Vector2d targetPosition = new Vector2d(0, 0);
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.C;
+import org.firstinspires.ftc.teamcode.drive.Drive;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.driveimpl.PosePidDrive;
+import org.firstinspires.ftc.teamcode.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.drivetrain.drivetrainimpl.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.input.AsyncThreaded;
+import org.firstinspires.ftc.teamcode.output.goBildaTouchDriver;
+import org.firstinspires.ftc.teamcode.output.motorimpl.DcMotorExMotor;
+import org.firstinspires.ftc.teamcode.output.motorimpl.ServoMotor;
+import org.firstinspires.ftc.teamcode.pid.Pid;
+import org.firstinspires.ftc.teamcode.utils.M;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+@Autonomous
+public class leftFarPole extends LinearOpMode {
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    AprilTagDetection tagOfInterest = null;
+    int randomization = 1;
+    double fx = 578.272;
+    double fy = 578.272;
+    double tagsize = 0.166;
+    double cx = 402.145;
+    double cy = 221.506;
+    int LEFT = 1;
+    int MIDDLE = 2;
+    int RIGHT = 3;
+
+    private int state = 0;
+    private AtomicBoolean test;
     private AsyncThreaded drivetrainThread;
+    private AsyncThreaded linSlideThread;
+
+    //
+    private TouchSensor turretSensor;
+    private Pid linSlidePid;
     private Pid pitchPid;
     private Pid turretPid;
-    private Pid linSlidePid;
     private Drivetrain drivetrain;
     private DoesntResetDcMotorExMotor turret;
     private DoesntResetDcMotorExMotor pitch;
@@ -54,8 +106,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private ServoMotor latch;
     private ServoMotor leftArm;
     private ServoMotor rightArm;
-    private Controller controller1;
-    private Controller controller2;
+
     private static double turretP = 3.2;
     private static double turretI = 1.2;
     private static double turretD = 0;
@@ -68,10 +119,10 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private static double slidesI = 1.2;
     private static double slidesD = 0;
 
+    private magnetTouch pitchTouchSensor;
+    private goBildaTouchDriver turretTouchSensor;
 
     //Variable
-    private double targetAngle = 0;
-
     private int linSlidePosition = 0;
     private int depositPosition = 0;
     private int clawPosition = 0;
@@ -79,32 +130,31 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private int frontArmPosition = 1;
     private int armPosition = 2;
     private int pitchPosition;
-    private double[] linSlidePositions = {0,0.35,0.95};
+    private double[] linSlidePositions = {0,0.5,1};
     private double pitchReset = 0;
     private double turretReset = 0;
     private double pitchLastPosition = 0;
     private double turretLastPosition = 0;
 
-    private magnetTouch pitchTouchSensor;
-    private goBildaTouchDriver turretTouchSensor;
     private final double[] clawPositions = { 0.0, 1.0};
-    private final double[] frontArmPositionas = {0,1,0.8};
+    private final double[] frontArmPositions = {0,1,0.8};
     //Calculation variable!
-    private static double targetPitchPosition;
-    private static double targetTurretPosition;
+    private double targetPitchPosition;
+    private double targetTurretPosition;
     private double targetLinSlidePosition = this.linSlidePositions[linSlidePosition];
     private double targetFrontArmPosition = C.frontArmPositions[frontArmPosition];
     private double targetDepositPosition = C.depositPositions[depositPosition];
     private double targetArmPosition = 0.8;
-    private double lastTurretPosition = 0.5;
-    private final double[] frontArmPositions = {0,1,0.8};
 
     private boolean clawOpen = true;
-    private boolean latchEngaged = false;
+    private boolean latchEngaged = true;
     private double targetPitchPower = 0;
     private double targetLinSlidePower = 0;
     private double targetTurretPower = 0;
-
+    private final double firstScorePosition = 0.31;
+    private final double secondScorePosition = 0.72;
+    SampleMecanumDrive drive;
+    Pose2d poseEstimate;
 
     //Tests
     private boolean linSlideHigh = true;
@@ -113,20 +163,25 @@ import org.firstinspires.ftc.teamcode.utils.M;
     private boolean linSlideRTP = true;
     private boolean armOut = false;
     private boolean pitchTS;
+    private boolean coneIn = false;
+    private boolean scorePos1 = false;
+    private boolean scorePos2 = false;
+    private boolean scorePos3 = false;
     private boolean turretSensorTouched;
     private boolean turretMode = false;
-    private int scorePos = 1;
-    private int autoLeftSequence = 1;
-    private int intakeStep = 1;
-    private int depositStep = 1;
-    private int cycleStep = 1;
-    SampleMecanumDrive drive;
-    Pose2d poseEstimate;
+    private double linSlidePower;
+
+    private int intakeStep = 0;
+    private int depositStep = 0;
+    private int CycleStep = 0;
+
+    private BNO055IMU imu;
+
+    private AsyncThreaded scoring;
     private void initDrivetrain() {
         this.drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,Math.toRadians(0)));
-//        headingController.setInputBounds(-Math.PI, Math.PI);
+        drive.getLocalizer().setPoseEstimate(new Pose2d(-36,-60,Math.toRadians(-90)));
     }
     private void initMotor() {
         this.pitch = new DoesntResetDcMotorExMotor(hardwareMap.get(DcMotorEx.class, "pitch"))
@@ -165,9 +220,6 @@ import org.firstinspires.ftc.teamcode.utils.M;
                 factor -> {
                     this.turret.setPower(factor);
                 });
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.getLocalizer().setPoseEstimate(new Pose2d(0,0,Math.toRadians(0)));
-        headingController.setInputBounds(-Math.PI, Math.PI);
     }
 
     private void initServo() {
@@ -201,9 +253,8 @@ import org.firstinspires.ftc.teamcode.utils.M;
         this.initDrivetrain();
         this.initPID();
         this.initPosition();
-        this.initControllers();
         this.initSensor();
-        this.initAsync();
+
     }
     private void updateServo() {
         this.deposit.update();
@@ -235,7 +286,6 @@ import org.firstinspires.ftc.teamcode.utils.M;
 //        drive.getLocalizer().update(); //very very monke code please do not waste your time trying to understand
 //        poseEstimate = drive.getLocalizer().getPoseEstimate();
 //        headingController.setTargetPosition(targetAngle);
-        drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x * 0.6));
 
 //        double headinginput = headingController.update(poseEstimate.getHeading());
 //        if(Math.abs(gamepad1.right_stick_x) <0.01) { // not turning thresh
@@ -244,10 +294,13 @@ import org.firstinspires.ftc.teamcode.utils.M;
 //            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x * 0.8));
 //            targetAngle = poseEstimate.getHeading();
 //        }
+        poseEstimate = drive.getLocalizer().getPoseEstimate();
+
         //removed auto pid holder for dp purposes
 //        drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
         drive.getLocalizer().update();
     }
+
     private void updateTelemetry() {
 //        updateDrivetrain();
 //        telemetry.addData("this.leftLinSlide.getPower()", this.leftLinSlide.getPower());
@@ -274,199 +327,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
         targetTurretPower = (gamepad1.left_trigger -gamepad1. right_trigger);
         targetLinSlidePower = 0.7*gamepad2.right_stick_y;
     }
-    private void initControllers() {
-        this.controller1 = new GamepadController(gamepad1);
-        this.controller2 = new GamepadController(gamepad2);
-        this.controller2
-//                .subscribeEvent(Controller.EventType.DPAD_RIGHT, () -> {
-//                    scorePos = 4;
-//                })
-                .subscribeEvent(Controller.EventType.A, () -> {
-                    this.targetFrontArmPosition -= 0.05;
-                })
-                .subscribeEvent(Controller.EventType.X, () -> {
-                    this.armPosition = 5;
-                })
-                .subscribeEvent(Controller.EventType.RIGHT_STICK_BUTTON, () -> {
-                    cycleStep = 1;
-                })
-                .subscribeEvent(Controller.EventType.LEFT_STICK_BUTTON, () -> {
-                    this.turretRTP = true;
-                    this.targetTurretPosition = 0.5;
-                })
-                .subscribeEvent(Controller.EventType.Y, () -> {
-                    this.targetFrontArmPosition += 0.05;
-                })
-                .subscribeEvent(Controller.EventType.B, () -> {
-                    switch (cycleStep) {
-                        case 1:
-                            linSlideReset();
-                            this.cycleStep++;
-                            break;
-                        case 2:
-                            this.intakeOut();
-                            this.cycleStep++;
-                            break;
-                        case 3:
-                            if(Math.abs(this.turret.getCurrentPosition() - 0.5) > 0.3){
-                                this.turretRTP = true;
-                                this.targetTurretPosition = 0.5;
-                            }
-                            this.intakeBack();
-                            this.cycleStep++;
-                            break;
-                        case 4:
-                            this.clawOpen = true;
-                            this.updatePosition();
-                            this.updateServo();
-                            long start = System.currentTimeMillis();
-                            while(System.currentTimeMillis()- start <= 250) {
-//                                this.updateDrivetrain();
-//                                this.updateMotor();
-                            }
-                            this.preIntakeMode();
-                            cycleStep++;
-                            break;
 
-                        case 5:
-//                            this.latchEngaged = true;
-//                            this.updateAll();
-                            switch(scorePos){
-                                case 1:
-                                    scoringPosition1();
-                                    break;
-                                case 2:
-                                    scoringPosition2();
-                                    break;
-                                case 3:
-                                    scoringPosition3();
-                                    break;
-                                case 4:
-                                    scoringPosition4();
-                                    break;
-                                case 5:
-                                    scoringPosition5();
-                                    break;
-                                case 6:
-                                    scoringPosition6();
-                                    break;
-                            }
-                            cycleStep++;
-                            break;
-                        default:
-                            latchEngaged = false;
-                            cycleStep = 1;
-                            break;
-                    }
-                })
-//                .subscribeEvent(Controller.EventType.DPAD_UP, () -> {
-//                    scorePos = 5;
-//                })
-                .subscribeEvent(Controller.EventType.LEFT_BUMPER, () -> {
-                    if(this.armPosition > 1) this.armPosition--;
-                    moveArm(armPosition);
-                })
-                .subscribeEvent(Controller.EventType.RIGHT_BUMPER, () -> {
-                    if(this.armPosition < 9) this.armPosition++;
-                    moveArm(armPosition);
-                })
-                .subscribeEvent(Controller.EventType.DPAD_UP, () -> {
-                    scorePos = 1;
-                    this.scoringPosition1();
-                })
-                .subscribeEvent(Controller.EventType.DPAD_LEFT, () -> {
-                    scorePos = 2;
-                    this.scoringPosition2();
-                })
-                .subscribeEvent(Controller.EventType.DPAD_RIGHT, () -> {
-                    scorePos = 3;
-                    this.scoringPosition3();
-                })
-                .subscribeEvent(Controller.EventType.DPAD_DOWN, () -> {
-                    scorePos = 7;
-                    this.scoringPosition7();
-                });
-
-        this.controller1
-                .subscribeEvent(Controller.EventType.LEFT_BUMPER, () -> {
-                    this.latchEngaged = !this.latchEngaged;
-                    if(this.targetDepositPosition > 0.7)this.lastTurretPosition = this.turret.getCurrentPosition();
-                })
-                .subscribeEvent(Controller.EventType.RIGHT_BUMPER, () -> {
-                    this.clawOpen = !this.clawOpen;
-                })
-                .subscribeEvent(Controller.EventType.Y, () -> {
-                    this.targetFrontArmPosition = 0.47;
-                    intakeStep = 1;
-                })
-                .subscribeEvent(Controller.EventType.DPAD_UP, () -> {
-                    scorePos = 1;
-                    this.scoringPosition1();
-                })
-                .subscribeEvent(Controller.EventType.DPAD_LEFT, () -> {
-                    scorePos = 2;
-                    this.scoringPosition2();
-                })
-//                .subscribeEvent(Controller.EventType.DPAD_RIGHT, () -> {
-//                    scorePos = 3;
-//                    this.scoringPosition3();
-//                })
-                .subscribeEvent(Controller.EventType.DPAD_RIGHT, () -> {
-                    this.midPole();
-                })
-                .subscribeEvent(Controller.EventType.DPAD_DOWN, () -> {
-                    this.frontArmPosition = (this.frontArmPosition + 1) % C.frontArmPositions.length;
-                    moveFrontArm();
-                })
-                .subscribeEvent(Controller.EventType.RIGHT_STICK_BUTTON, () -> {
-                    linSlideHigh = true;
-                })
-                .subscribeEvent(Controller.EventType.LEFT_STICK_BUTTON, () -> {
-                    linSlideHigh = false;
-                })
-                .subscribeEvent(Controller.EventType.B, () -> {
-                    switch (intakeStep) {
-                        case 1:
-                            this.intakeOut();
-                            this.intakeStep++;
-                            break;
-                        case 2:
-                            this.intakeBack();
-                            this.intakeStep++;
-                            break;
-                        default:
-                            this.clawOpen = true;
-                            this.updatePosition();
-                            this.updateServo();
-                            long start = System.currentTimeMillis();
-                            while(System.currentTimeMillis()- start <= 300) {
-//                                this.updateAll();
-//                                this.updateDrivetrain();
-                            }
-                            this.preIntakeMode();
-                            intakeStep = 1;
-                    }
-                })
-                .subscribeEvent(Controller.EventType.A, () -> {
-                    if(!armOut) {
-                        moveArm(armPosition);
-                        armOut = true;
-                    }
-                    else {
-                        moveArm(-1);
-                        armOut = false;
-                    }
-                })
-                .subscribeEvent(Controller.EventType.X, () -> {
-                    this.pitchRTP = true;
-//                    this.lastTurretPosition = this.turret.getCurrentPosition();
-                    this.greatReset();
-                    if(Math.abs(this.turret.getCurrentPosition() - 0.5) > 0.25){
-                        this.turretRTP = true;
-                        this.targetTurretPosition = 0.5;
-                    }
-                });
-    }
     private void initPosition() {
         moveArm(0);
         this.targetFrontArmPosition = 0.9;
@@ -546,17 +407,13 @@ import org.firstinspires.ftc.teamcode.utils.M;
         else this.claw.setPosition(0);
         this.deposit.setPosition(targetDepositPosition);
     }
-    private void updateSensor() {
-        pitchTS = this.pitchTouchSensor.check();
-    }
 
     private void updateControllers() {
-        this.controller1.update();
-        this.controller2.update();
+//        this.controller1.update();
+//        this.controller2.update();
     }
     private void updateAll() { //order: DT, Var, sensor, Control, position, motor. servo, telemetry.
         this.updateVariable();
-        this.updateSensor();
         this.updateControllers();
         this.updatePosition();
         this.updateMotor();
@@ -614,7 +471,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
         linSlideRTP = true;
         this.latchEngaged = true;
         movePitch(0.7);
-        this.targetDepositPosition = .8;
+        this.targetDepositPosition = 0.95;
         this.linSlidePosition = 1;
         this.updateAll();
     }
@@ -701,94 +558,168 @@ import org.firstinspires.ftc.teamcode.utils.M;
         moveDeposit();
         movePitch(0.27);
     }
-
-    private void resetDepositPosition(){
-        this.targetArmPosition = 0.1;
-        this.targetFrontArmPosition = 0.7;
-        this.updatePosition();
-        this.updateServo();
-        updateSensor();
-        if(!pitchTS) {
-            while (!pitchTS) {
-                updateSensor();
-                telemetry.addLine("Resetting the Pitch Position");
-                telemetry.addData("Pitch Touch Sensor", pitchTS);
-                telemetry.update();
-                this.pitch.setPower(0.25);
-                this.pitch.update();
-            }
+    public double angleWrap(double radians) {
+        while (radians > Math.PI) {
+            radians -= 2 * Math.PI;
         }
-        this.pitch.setPower(0);
-        this.pitch.update();
-        this.pitch.stopAndResetEncoder();
-        this.pitchRTP = true;
-        pitch.setPosition(0.3);
-        this.pitch.update();
-        if(!turretTouchSensor.check()) {
-            while (!turretTouchSensor.check()) {
-                turret.setPower(-0.4);
-                telemetry.addData("use the right joystick to rotate the turret ~45 degrees to the left assuming the front arm does not face you", turret.getPower());
-                telemetry.update();
-                this.turret.update();
-            }
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
         }
-        this.turret.setPower(0);
-        this.turret.update();
-        this.turret.stopAndResetEncoder();
-        this.turret.setPosition(0.2);
-        this.turret.update();
-        if(!turretTouchSensor.check()) {
-            while (!turretTouchSensor.check()) {
-                turret.setPower(-0.2);
-                telemetry.addData("use the right joystick to rotate the turret ~45 degrees to the left assuming the front arm does not face you", turret.getPower());
-                telemetry.update();
-                this.turret.update();
-            }
-        }
-        this.turret.setPower(0);
-        this.turret.update();
-        this.turret.stopAndResetEncoder();
-        this.turret.update();
-        telemetry.addLine("Ready!");
-        telemetry.update();
-        this.armPosition = 4;
+        return radians;//its radians you dumbass
     }
-
-
-    private void initAsync(){
-        drivetrainThread = new AsyncThreaded(() -> {})
-                .then(() -> {
-                    while (this.opModeInInit() || this.opModeIsActive() && !AsyncThreaded.stopped) updateDrivetrain();
-                });
+        private void turretAutoAimTest() {
+        this.updateDrivetrain();
+        turretRTP = true;
+        double turretDesiredAngle = Math.max(0, Math.min(1, (Math.toDegrees(angleWrap((Math.atan2(-24 - poseEstimate.getY(), 0 - poseEstimate.getX()) - poseEstimate.getHeading() - Math.toRadians(180)))) + 90) / 180));
+        //0 and -10 are the targets. Ill organize it later but basically we gotta make a coordinate for every pole.
+        this.targetTurretPosition = turretDesiredAngle;
+        this.updateAll();
     }
-
-
     @Override
     public void runOpMode() throws InterruptedException {
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+//        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+//        camera.setPipeline(aprilTagDetectionPipeline);
+//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode)
+//            {
+//
+//            }
+//        });
+        double a = 1;
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(new Pose2d(-36, -60, Math.toRadians(-90)));
+        waitForStart();
+        if (isStopRequested()) return;
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-36, -60, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-36, -2, Math.toRadians(-90)))
+                .build();
+        Trajectory traj1 = drive.trajectoryBuilder(traj.end())
+                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(-180)))
+                .build();
+//            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+//            if (currentDetections.size() != 0) {
+//                boolean tagFound = false;
+//                for (AprilTagDetection tag : currentDetections) {
+//                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+//                        tagOfInterest = tag;
+//                        tagFound = true;
+//                        break;
+//                    }
+//                }
+//                if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+//                    telemetry.addLine("LEFT");
+//                    randomization = 1;
+//                } else if (tagOfInterest.id == MIDDLE) {
+//                    telemetry.addLine("MIDDLE");
+//                    randomization = 2;
+//                } else {
+//                    telemetry.addLine("RIGHT");
+//                    randomization = 3;
+//                }
+//                telemetry.update();
+//
+//            }
+//            telemetry.addLine(String.valueOf(imu.getAngularOrientation()));
+//            telemetry.update();
+        while(opModeInInit()) {
+            this.initAll();
 
-        while(opModeInInit()){
-            while(opModeInInit()){
-                AsyncThreaded.stopped = true;
-                this.initAll();
-//                this.leftLinSlide.stopAndResetEncoder();
-//                resetDepositPosition();
-                this.targetPitchPosition = 0.5;
-                this.targetTurretPosition = 0.5;
-                this.turretRTP = true;
-                this.pitchRTP = true;
-                waitForStart();
-            }
         }
-        while (opModeIsActive()) {
-            if(gamepad2.left_trigger > 0.3) {
-                scoringPosition1TurretLeft();
-            } else if(gamepad2.right_trigger > 0.3) {
-                scoringPosition1TurretRight();
+        while(opModeIsActive()) {
+            this.linSlideRTP = true;
+            this.turretRTP = true;
+            this.pitchRTP = true;
+            if(a == 1) {
+                while(a == 1) {
+                    drive.followTrajectory(traj);
+                    drive.followTrajectory(traj1);
+                    a=2;
+                }
+            } else if (a == 2) {
+                while(a==2) {
+                    this.pitchRTP = true;
+                    this.turretRTP = true;
+                    turretAutoAimTest();
+                    targetPitchPosition = 0.53;
+                    updateAll();
+                    a=3;
+                }
+
+            }else if (a==3) {
+                while(a==3) {
+                }
             }
-            this.interact();
-            this.updateAll();
+
+            //impliment auto aim onto far pole here or some pole to prove it works
+            //x is 0, y is -24
+            drive.update();
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading", poseEstimate.getHeading());
         }
-        AsyncThreaded.stopped = false;
+
     }
+
+    private boolean linSlideCheck(){
+        return Math.abs(this.leftLinSlide.getCurrentPosition() - this.targetLinSlidePosition) < 0.05;
+    }
+
+    private void NLscore(){
+        linSlideUp();
+        sleep(100);
+        depositPosition = 2;
+        moveDeposit();
+    }
+
+    private void moveFrontArm1(double position){
+        targetFrontArmPosition = position;
+        this.updateServo();
+    }
+    private void intakeOut(double position){
+        if(position < 0) position = 0;
+        this.clawOpen = true;
+//        frontArmPosition = 0;
+        moveFrontArm1(position);
+        moveArm(armPosition);
+    }
+    private void resetPitch(){
+        pitchRTP = true;
+        this.targetPitchPosition = 0.5;
+        this.updateMotor();
+    }
+
+    private void Ldump(){
+        this.latchEngaged = false;
+        this.updateAll();
+    }
+    private void score(){
+        pitchRTP = true;
+        linSlideRTP = true;
+        linSlideUp();
+        this.sleep(250);
+        this.latchEngaged = true;
+        this.updateAll();
+        depositPosition = 2;
+        moveDeposit();
+    }
+
+    private void preIntakeMode(int i){
+        this.targetArmPosition = 0.3;
+        this.targetFrontArmPosition = C.getTargetFrontArmPosition(i);
+        this.updatePosition();
+        this.updateServo();
+    }
+
 
 }
