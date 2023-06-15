@@ -181,7 +181,7 @@ public class leftFarPole extends LinearOpMode {
     private void initDrivetrain() {
         this.drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.getLocalizer().setPoseEstimate(new Pose2d(-36,-60,Math.toRadians(-90)));
+//        drive.getLocalizer().setPoseEstimate(new Pose2d(-36,-60,Math.toRadians(-90)));
     }
     private void initMotor() {
         this.pitch = new DoesntResetDcMotorExMotor(hardwareMap.get(DcMotorEx.class, "pitch"))
@@ -595,12 +595,12 @@ public class leftFarPole extends LinearOpMode {
 //
 //            }
 //        });
-        double a = 1;
+        int a = 1;
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(new Pose2d(-36, -60, Math.toRadians(-90)));
         waitForStart();
         if (isStopRequested()) return;
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-36, -60, Math.toRadians(-90)))
+        Trajectory traj = drive.trajectoryBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(-36, -2, Math.toRadians(-90)))
                 .build();
         Trajectory traj1 = drive.trajectoryBuilder(traj.end())
@@ -639,25 +639,44 @@ public class leftFarPole extends LinearOpMode {
             this.linSlideRTP = true;
             this.turretRTP = true;
             this.pitchRTP = true;
-            if(a == 1) {
-                while(a == 1) {
+            switch(a) {
+                case 1:
                     drive.followTrajectory(traj);
                     drive.followTrajectory(traj1);
-                    a=2;
-                }
-            } else if (a == 2) {
-                while(a==2) {
-                    this.pitchRTP = true;
-                    this.turretRTP = true;
-                    turretAutoAimTest();
-                    targetPitchPosition = 0.53;
-                    updateAll();
-                    a=3;
-                }
-
-            }else if (a==3) {
-                while(a==3) {
-                }
+                    a++;
+                    break;
+//                case 2:
+//                        this.pitchRTP = true;
+//                        this.turretRTP = true;
+//                        turretAutoAimTest();
+//                        targetPitchPosition = 0.53;
+//                        updateAll();
+//                        a++;
+//                        break;
+//
+//                case 3:
+//                        this.score();
+//                        this.updateAll();
+//                        this.preIntakeMode();
+//                        while (!linSlideCheck()) {
+//                            updateAll();
+//                        }
+//                        long start = System.currentTimeMillis();
+//                        while (System.currentTimeMillis() - start <= 250) {
+////                                this.updateDrivetrain();
+////                                this.updateMotor();
+//                        }
+//                        this.dump();
+//                        this.updateAll();
+//                        long start1 = System.currentTimeMillis();
+//                        while (System.currentTimeMillis() - start1 <= 250) {
+////                                this.updateDrivetrain();
+////                                this.updateMotor();
+//                        }
+//                        this.armPosition = 5;
+//                        linSlideReset();
+//                        this.updateAll();
+//                        break;
             }
 
             //impliment auto aim onto far pole here or some pole to prove it works
@@ -702,6 +721,7 @@ public class leftFarPole extends LinearOpMode {
     private void Ldump(){
         this.latchEngaged = false;
         this.updateAll();
+
     }
     private void score(){
         pitchRTP = true;
