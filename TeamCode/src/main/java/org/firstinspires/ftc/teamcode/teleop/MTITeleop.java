@@ -542,8 +542,8 @@ import org.firstinspires.ftc.teamcode.utils.M;
         this.rightArm.setPosition(targetArmPosition);
         if(latchEngaged)this.latch.setPosition(1);
         else this.latch.setPosition(0);
-        if(clawOpen)this.claw.setPosition(0.6);
-        else this.claw.setPosition(0);
+        if(clawOpen)this.claw.setPosition(0);
+        else this.claw.setPosition(0.6);
         this.deposit.setPosition(targetDepositPosition);
     }
     private void updateSensor() {
@@ -582,7 +582,7 @@ import org.firstinspires.ftc.teamcode.utils.M;
         }
     }
     private void preIntakeMode(){
-        this.targetFrontArmPosition = 0.6;
+        this.targetFrontArmPosition = 0.55;
     }
     private void scoringPosition1(){
         pitchRTP = true;

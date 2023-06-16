@@ -84,7 +84,8 @@ public class leftFarPole extends LinearOpMode {
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
-
+    Trajectory traj;
+    Trajectory traj1;
     private int state = 0;
     private AtomicBoolean test;
     private AsyncThreaded drivetrainThread;
@@ -106,7 +107,7 @@ public class leftFarPole extends LinearOpMode {
     private ServoMotor latch;
     private ServoMotor leftArm;
     private ServoMotor rightArm;
-
+    int a;
     private static double turretP = 3.2;
     private static double turretI = 1.2;
     private static double turretD = 0;
@@ -179,7 +180,7 @@ public class leftFarPole extends LinearOpMode {
 
     private AsyncThreaded scoring;
     private void initDrivetrain() {
-        this.drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        drive.getLocalizer().setPoseEstimate(new Pose2d(-36,-60,Math.toRadians(-90)));
     }
@@ -248,13 +249,13 @@ public class leftFarPole extends LinearOpMode {
     }
 
     private void initAll() {
+        this.initPID();
         this.initMotor();
         this.initServo();
         this.initDrivetrain();
-        this.initPID();
         this.initPosition();
         this.initSensor();
-
+        this.initAsync();
     }
     private void updateServo() {
         this.deposit.update();
@@ -294,11 +295,14 @@ public class leftFarPole extends LinearOpMode {
 //            drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x * 0.8));
 //            targetAngle = poseEstimate.getHeading();
 //        }
-        poseEstimate = drive.getLocalizer().getPoseEstimate();
+//        poseEstimate = drive.getLocalizer().getPoseEstimate();
+        poseEstimate = drive.getPoseEstimate();
+
 
         //removed auto pid holder for dp purposes
 //        drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y,-gamepad1.left_stick_x, -gamepad1.right_stick_x));
-        drive.getLocalizer().update();
+//        drive.getLocalizer().update();
+        drive.update();
     }
 
     private void updateTelemetry() {
@@ -403,8 +407,8 @@ public class leftFarPole extends LinearOpMode {
         this.rightArm.setPosition(targetArmPosition);
         if(latchEngaged)this.latch.setPosition(1);
         else this.latch.setPosition(0);
-        if(clawOpen)this.claw.setPosition(0.6);
-        else this.claw.setPosition(0);
+        if(clawOpen)this.claw.setPosition(0);
+        else this.claw.setPosition(0.6);
         this.deposit.setPosition(targetDepositPosition);
     }
 
@@ -544,7 +548,6 @@ public class leftFarPole extends LinearOpMode {
     }
 
     private void linSlideReset(){
-        this.pitchRTP = true;
         if(latchEngaged)this.latchEngaged = false;
         if(targetFrontArmPosition > 0.8) {
             targetFrontArmPosition = 0.7;
@@ -556,7 +559,7 @@ public class leftFarPole extends LinearOpMode {
 //        }
         this.depositPosition = 0;
         moveDeposit();
-        movePitch(0.27);
+        this.updateAll();
     }
     public double angleWrap(double radians) {
         while (radians > Math.PI) {
@@ -566,6 +569,13 @@ public class leftFarPole extends LinearOpMode {
             radians += 2 * Math.PI;
         }
         return radians;//its radians you dumbass
+    }
+
+    private void initAsync(){
+        drivetrainThread = new AsyncThreaded(() -> {})
+                .then(() -> {
+                    while (this.opModeInInit() || this.opModeIsActive() && !AsyncThreaded.stopped) updateDrivetrain();
+                });
     }
         private void turretAutoAimTest() {
         this.updateDrivetrain();
@@ -595,17 +605,8 @@ public class leftFarPole extends LinearOpMode {
 //
 //            }
 //        });
-        int a = 1;
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(-36, -60, Math.toRadians(-90)));
-        waitForStart();
-        if (isStopRequested()) return;
-        Trajectory traj = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-36, -2, Math.toRadians(-90)))
-                .build();
-        Trajectory traj1 = drive.trajectoryBuilder(traj.end())
-                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(-180)))
-                .build();
+
+
 //            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 //            if (currentDetections.size() != 0) {
 //                boolean tagFound = false;
@@ -633,7 +634,18 @@ public class leftFarPole extends LinearOpMode {
 //            telemetry.update();
         while(opModeInInit()) {
             this.initAll();
-
+            this.initDrivetrain();
+            a = 1;
+            drive.setPoseEstimate(new Pose2d(-36, -60, Math.toRadians(-90)));
+            waitForStart();
+            if (isStopRequested()) return;
+            traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(-36, -2, Math.toRadians(-90)))
+                    .build();
+            traj1 = drive.trajectoryBuilder(traj.end())
+                    .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(-180)))
+                    .build();
+            waitForStart();
         }
         while(opModeIsActive()) {
             this.linSlideRTP = true;
@@ -645,38 +657,49 @@ public class leftFarPole extends LinearOpMode {
                     drive.followTrajectory(traj1);
                     a++;
                     break;
-//                case 2:
-//                        this.pitchRTP = true;
-//                        this.turretRTP = true;
-//                        turretAutoAimTest();
-//                        targetPitchPosition = 0.53;
-//                        updateAll();
-//                        a++;
-//                        break;
-//
-//                case 3:
-//                        this.score();
-//                        this.updateAll();
-//                        this.preIntakeMode();
-//                        while (!linSlideCheck()) {
-//                            updateAll();
-//                        }
-//                        long start = System.currentTimeMillis();
-//                        while (System.currentTimeMillis() - start <= 250) {
-////                                this.updateDrivetrain();
-////                                this.updateMotor();
-//                        }
-//                        this.dump();
-//                        this.updateAll();
+                case 2:
+                        this.pitchRTP = true;
+                        this.turretRTP = true;
+                        turretAutoAimTest();
+                        targetPitchPosition = 0.53;
+                        updateAll();
+                        a++;
+                        break;
+
+                case 3:
+                        this.pitchRTP = false;
+                        this.score();
+                        this.updateAll();
+                        this.preIntakeMode();
+                        while (!linSlideCheck()) {
+                            updateAll();
+                        }
+                        long start = System.currentTimeMillis();
+                        while (System.currentTimeMillis() - start <= 250) {
+//                                this.updateDrivetrain();
+//                                this.updateMotor();
+                        }
+//                    sleep(250);
+                        this.dump();
+                        this.updateAll();
 //                        long start1 = System.currentTimeMillis();
 //                        while (System.currentTimeMillis() - start1 <= 250) {
 ////                                this.updateDrivetrain();
 ////                                this.updateMotor();
 //                        }
-//                        this.armPosition = 5;
-//                        linSlideReset();
-//                        this.updateAll();
-//                        break;
+//                    sleep(250);
+                    long start4 = System.currentTimeMillis();
+                    while (System.currentTimeMillis() - start4 <= 250) {
+//                                this.updateDrivetrain();
+//                                this.updateMotor();
+                    }
+                        this.armPosition = 5;
+                        linSlideReset();
+                        this.updateAll();
+                        a++;
+                        break;
+                case 4:
+                    break;
             }
 
             //impliment auto aim onto far pole here or some pole to prove it works
@@ -727,7 +750,11 @@ public class leftFarPole extends LinearOpMode {
         pitchRTP = true;
         linSlideRTP = true;
         linSlideUp();
-        this.sleep(250);
+        long star2 = System.currentTimeMillis();
+//        while(System.currentTimeMillis()- star2 <= 250){
+////            this.updateMotor();
+//        }
+        sleep(250);
         this.latchEngaged = true;
         this.updateAll();
         depositPosition = 2;
