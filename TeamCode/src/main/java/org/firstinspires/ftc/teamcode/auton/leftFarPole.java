@@ -880,6 +880,9 @@ public class leftFarPole extends LinearOpMode {
     int RIGHT = 3;
     Trajectory traj;
     Trajectory traj1;
+    Trajectory park1;
+    Trajectory park2;
+    Trajectory park3;
     private int state = 0;
     private AtomicBoolean test;
     private AsyncThreaded drivetrainThread;
@@ -1381,52 +1384,51 @@ public class leftFarPole extends LinearOpMode {
     }
     @Override
     public void runOpMode() throws InterruptedException {
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-//        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-//        camera.setPipeline(aprilTagDetectionPipeline);
-//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-//        {
-//            @Override
-//            public void onOpened()
-//            {
-//                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode)
-//            {
-//
-//            }
-//        });
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            }
 
+            @Override
+            public void onError(int errorCode)
+            {
 
-//            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-//            if (currentDetections.size() != 0) {
-//                boolean tagFound = false;
-//                for (AprilTagDetection tag : currentDetections) {
-//                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
-//                        tagOfInterest = tag;
-//                        tagFound = true;
-//                        break;
-//                    }
-//                }
-//                if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-//                    telemetry.addLine("LEFT");
-//                    randomization = 1;
-//                } else if (tagOfInterest.id == MIDDLE) {
-//                    telemetry.addLine("MIDDLE");
-//                    randomization = 2;
-//                } else {
-//                    telemetry.addLine("RIGHT");
-//                    randomization = 3;
-//                }
-//                telemetry.update();
-//
-//            }
-//            telemetry.addLine(String.valueOf(imu.getAngularOrientation()));
-//            telemetry.update();
+            }
+        });
         while(opModeInInit()) {
+
+
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            if (currentDetections.size() != 0) {
+                boolean tagFound = false;
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+                if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+                    telemetry.addLine("LEFT");
+                    randomization = 1;
+                } else if (tagOfInterest.id == MIDDLE) {
+                    telemetry.addLine("MIDDLE");
+                    randomization = 2;
+                } else {
+                    telemetry.addLine("RIGHT");
+                    randomization = 3;
+                }
+                telemetry.update();
+
+            }
+            telemetry.update();
             this.initAll();
             this.initDrivetrain();
             a = 1;
@@ -1437,8 +1439,18 @@ public class leftFarPole extends LinearOpMode {
                     .lineToLinearHeading(new Pose2d(-36, -2, Math.toRadians(-90)))
                     .build();
             traj1 = drive.trajectoryBuilder(traj.end())
-                    .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(-180)))
+                    .lineToLinearHeading(new Pose2d(-36, -16, Math.toRadians(-190)))
                     .build();
+            park3 = drive.trajectoryBuilder(traj1.end())
+                    .lineToLinearHeading(new Pose2d(-11.5, -12, Math.toRadians(-180)))
+                    .build();
+            park2 = drive.trajectoryBuilder(traj1.end())
+                    .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(-90)))
+                    .build();
+            park1 = drive.trajectoryBuilder(traj1.end())
+                    .lineToLinearHeading(new Pose2d(-59, -12, Math.toRadians(-180)))
+                            .build();
+
             waitForStart();
         }
         while(opModeIsActive()) {
@@ -1459,7 +1471,6 @@ public class leftFarPole extends LinearOpMode {
                     updateAll();
                     a++;
                     break;
-
                 case 3:
                     this.pitchRTP = false;
                     this.score();
@@ -1468,12 +1479,12 @@ public class leftFarPole extends LinearOpMode {
                     while (!linSlideCheck()) {
                         updateAll();
                     }
-                    long start = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - start <= 250) {
-//                                this.updateDrivetrain();
-//                                this.updateMotor();
-                    }
-//                    sleep(250);
+//                    long start = System.currentTimeMillis();
+//                    while (System.currentTimeMillis() - start <= 250) {
+////                                this.updateDrivetrain();
+////                                this.updateMotor();
+//                    }
+                    sleep(250);
                     this.dump();
                     this.updateAll();
 //                        long start1 = System.currentTimeMillis();
@@ -1481,12 +1492,12 @@ public class leftFarPole extends LinearOpMode {
 ////                                this.updateDrivetrain();
 ////                                this.updateMotor();
 //                        }
-//                    sleep(250);
-                    long start4 = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - start4 <= 250) {
-//                                this.updateDrivetrain();
-//                                this.updateMotor();
-                    }
+                    sleep(250);
+//                    long start4 = System.currentTimeMillis();
+//                    while (System.currentTimeMillis() - start4 <= 250) {
+////                                this.updateDrivetrain();
+////                                this.updateMotor();
+//                    }
                     this.armPosition = 5;
                     linSlideReset();
                     intakeOut(C.getTargetFrontArmPosition(5));
@@ -1494,11 +1505,12 @@ public class leftFarPole extends LinearOpMode {
                     a++;
                     break;
                 case 4:
-                    long start5 = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - start5 <= 150) {
-//                                this.updateDrivetrain();
-//                                this.updateMotor();
-                    }
+//                    long start5 = System.currentTimeMillis();
+//                    while (System.currentTimeMillis() - start5 <= 150) {
+////                                this.updateDrivetrain();
+////                                this.updateMotor();
+//                    }
+                    sleep(150);
                     for(int j = 4; j >= 0; j--){
                         sleep(75);
                         intakeBack();
@@ -1523,10 +1535,19 @@ public class leftFarPole extends LinearOpMode {
                         this.updateAll();
                         sleep(100);
                     }
+                    a++;
                     break;
+                case 5:
+                    if(randomization == 3) {
+                        drive.followTrajectory(park3);
+                    } else if(randomization ==2){
+                        drive.followTrajectory(park2);
+                    } else if(randomization ==1) {
+                        drive.followTrajectory(park1);
+                    }
             }
 
-            //impliment auto aim onto far pole here or some pole to prove it works
+            //auto aim
             //x is 0, y is -24
             drive.update();
             Pose2d poseEstimate = drive.getPoseEstimate();
